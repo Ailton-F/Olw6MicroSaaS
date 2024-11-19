@@ -12,9 +12,9 @@ class CreateTasksTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->text('desc');
-            $table->timestamp('due_at');
+            $table->timestamp('due_at')->index();
             $table->timestamp('completed_at')->nullable();
-            $table->timestamp('reminder_at');
+            $table->timestamp('reminder_at')->index()->nullable();
             $table->string('meta');
             $table->string('additional_info')->nullable();
             $table->timestamps();
