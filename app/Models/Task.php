@@ -9,7 +9,7 @@ class Task extends Model
 {
     public $fillable = [
         'user_id',
-        'description',
+        'desc',
         'meta',
         'additional_info',
         'due_at',

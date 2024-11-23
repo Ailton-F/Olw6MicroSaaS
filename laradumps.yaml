@@ -16,8 +16,8 @@ observers:
   queries: false
   slow_queries: false
   mail: false
-  logs: false
-  http: true
+  logs: true
+  http: false
   jobs: false
   commands: false
   scheduled_commands: false
