@@ -8,6 +8,8 @@ use App\Notifications\MenuNotification;
 use App\Notifications\ScheduleListNotification;
 use Exception;
 use OpenAI;
+use OpenAI\Responses\Chat\CreateResponse;
+use OpenAI\Testing\ClientFake;
 
 class ConversacionalServices 
 {
@@ -20,6 +22,24 @@ class ConversacionalServices
         '!update'=>'showUpdate',
     ];
 
+    public function __construct()
+    {
+        if(config('app.env')=='testing'){
+            $this->client = new ClientFake([
+                CreateResponse::fake([
+                    'choices' => [
+                        [
+                            'text' => 'awesome!',
+                        ],
+                    ],
+                ]),
+            ]);
+        } else {
+            $this->client = OpenAI::client(config('openia.token'));
+        }
+
+    }
+
     public function setUser(User $user): void
     {
         $this->user = $user;
@@ -28,6 +48,7 @@ class ConversacionalServices
     public function handleIncomingMessage($message_data)
     {
         $message_text = $message_data['Body'];
+
         if(array_key_exists(strtolower($message_text), $this->commands))
         {
             $handler = $this->commands[strtolower($message_text)];
@@ -124,8 +145,7 @@ class ConversacionalServices
     
     public function talkToGpt($messages, $clear_memory=false)
     {
-        $client = OpenAI::client(config('openia.token'));
-        $result = $client->chat()->create([
+        $result = $this->client->chat()->create([
             'model'=>'gpt-4o',
             'messages'=>$messages,
             'functions'=>[
